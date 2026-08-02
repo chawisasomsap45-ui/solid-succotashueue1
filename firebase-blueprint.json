@@ -1,0 +1,128 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Profile",
+      "description": "User account information, role (renter, lender, admin), and KYC status",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "fullName": { "type": "string" },
+        "role": { "type": "string", "enum": ["renter", "lender", "admin"] },
+        "kycStatus": { "type": "string", "enum": ["unsubmitted", "pending", "approved", "rejected"] },
+        "shoeSizeUs": { "type": "string" },
+        "shoeSizeEu": { "type": "string" },
+        "isVerified": { "type": "boolean" },
+        "verificationStatus": { "type": "string", "enum": ["unverified", "pending", "verified"] },
+        "idDocumentUrl": { "type": "string" },
+        "subscriptionPlan": { "type": "string", "enum": ["pay_per_rent", "slay_pass", "vip_black"] },
+        "subscriptionStatus": { "type": "string", "enum": ["active", "paused", "none"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "lender_profiles": {
+      "title": "Lender KYC Profile",
+      "description": "ID card photo, Bank account details for payouts, and verification timestamp",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "idCardImageUrl": { "type": "string" },
+        "bankBookImageUrl": { "type": "string" },
+        "bankAccountNumber": { "type": "string" },
+        "bankName": { "type": "string" },
+        "bankAccountName": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "rejectionReason": { "type": "string" },
+        "verifiedAt": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "idCardImageUrl", "bankAccountNumber", "bankName", "bankAccountName"]
+    },
+    "shoes": {
+      "title": "Shoe Listing",
+      "description": "Shoes offered by lenders for rental",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "lenderId": { "type": "string" },
+        "lenderName": { "type": "string" },
+        "brand": { "type": "string" },
+        "model": { "type": "string" },
+        "sizeUs": { "type": "number" },
+        "sizeEu": { "type": "number" },
+        "category": { "type": "string" },
+        "conditionRating": { "type": "string" },
+        "flawsDescription": { "type": "string" },
+        "rentalPricePerDay": { "type": "number" },
+        "rentalPricePerWeek": { "type": "number" },
+        "depositAmount": { "type": "number" },
+        "unavailableDates": { "type": "array" },
+        "approvalStatus": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["lenderId", "brand", "model", "rentalPricePerDay", "depositAmount"]
+    },
+    "shoe_images": {
+      "title": "Shoe Image",
+      "description": "Multi-angle photos of shoes (side, sole, tag, flaws)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "shoeId": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "tag": { "type": "string", "enum": ["side", "sole", "tag", "flaw", "other"] },
+        "isPrimary": { "type": "boolean" }
+      },
+      "required": ["shoeId", "imageUrl"]
+    },
+    "rentals": {
+      "title": "Rental Order and Escrow",
+      "description": "Order records with escrow state and condition proof links",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "shoeId": { "type": "string" },
+        "shoeName": { "type": "string" },
+        "brand": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "renterId": { "type": "string" },
+        "lenderId": { "type": "string" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "rentalDays": { "type": "number" },
+        "totalRentalFee": { "type": "number" },
+        "depositAmount": { "type": "number" },
+        "shippingFee": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "escrowStatus": { "type": "string", "enum": ["held", "released_to_lender", "refunded_to_renter", "disputed"] },
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected", "shipped", "active", "returned", "completed", "disputed"] },
+        "trackingNumber": { "type": "string" },
+        "preRentalProofImages": { "type": "array" },
+        "postRentalProofImages": { "type": "array" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["shoeId", "renterId", "lenderId", "startDate", "endDate", "totalRentalFee", "depositAmount"]
+    },
+    "disputes": {
+      "title": "Dispute Claim",
+      "description": "Damage or missing item disputes opened by lenders during post-rental inspection",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "rentalId": { "type": "string" },
+        "shoeId": { "type": "string" },
+        "lenderId": { "type": "string" },
+        "renterId": { "type": "string" },
+        "reason": { "type": "string" },
+        "proofImages": { "type": "array" },
+        "claimedAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["open", "resolved", "rejected"] },
+        "resolutionNotes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["rentalId", "lenderId", "renterId", "reason", "claimedAmount"]
+    }
+  }
+}

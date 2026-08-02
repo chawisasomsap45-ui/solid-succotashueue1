@@ -1,0 +1,6 @@
+{
+  "name": "Rent and Slay",
+  "description": "High-end footwear rental platform for luxury sneakers, heels, formal shoes, and designer kicks.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

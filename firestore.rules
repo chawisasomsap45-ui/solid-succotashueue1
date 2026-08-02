@@ -1,0 +1,95 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.uid == "FvEu0W176CSy0iDQIJfFIu2u8x23" ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+      );
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+    }
+
+    // Lender Profiles (KYC Data) - Private Access Only
+    match /lender_profiles/{profileId} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && (request.resource.data.userId == request.auth.uid || isAdmin());
+      allow update, delete: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // Shoes collection
+    match /shoes/{shoeId} {
+      allow read: if true; // Public browse for rental marketplace
+      allow create: if isSignedIn() && (request.resource.data.lenderId == request.auth.uid || isAdmin());
+      allow update, delete: if isSignedIn() && (resource == null || resource.data.lenderId == request.auth.uid || isAdmin());
+    }
+
+    // Shoe Images collection
+    match /shoe_images/{imageId} {
+      allow read: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+    
+    // Rentals & Escrow collection
+    match /rentals/{rentalId} {
+      allow read: if isSignedIn() && (
+        resource == null || 
+        resource.data.renterId == request.auth.uid || 
+        resource.data.userId == request.auth.uid || 
+        resource.data.lenderId == request.auth.uid || 
+        isAdmin()
+      );
+      allow create: if isSignedIn() && (
+        request.resource.data.renterId == request.auth.uid || 
+        request.resource.data.userId == request.auth.uid || 
+        isAdmin()
+      );
+      allow update, delete: if isSignedIn() && (
+        resource == null || 
+        resource.data.renterId == request.auth.uid || 
+        resource.data.userId == request.auth.uid || 
+        resource.data.lenderId == request.auth.uid || 
+        isAdmin()
+      );
+    }
+
+    // Disputes collection
+    match /disputes/{disputeId} {
+      allow read: if isSignedIn() && (
+        resource == null || 
+        resource.data.renterId == request.auth.uid || 
+        resource.data.lenderId == request.auth.uid || 
+        isAdmin()
+      );
+      allow create, update, delete: if isSignedIn() && (
+        request.resource.data.renterId == request.auth.uid || 
+        request.resource.data.lenderId == request.auth.uid || 
+        isAdmin()
+      );
+    }
+    
+    // Wishlist collection
+    match /wishlist/{wishlistId} {
+      allow read, write: if isSignedIn() && (isAdmin() || resource == null || resource.data.userId == request.auth.uid);
+    }
+
+    // User files collection
+    match /user_files/{fileId} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && (request.resource.data.userId == request.auth.uid || isAdmin());
+      allow update, delete: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // Default admin fallback
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
