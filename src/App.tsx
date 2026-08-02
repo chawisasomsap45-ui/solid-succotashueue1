@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shoe, CartItem, UserProfile, ShoeCategory } from './types';
 import { INITIAL_SHOES } from './data/shoesData';
 import { Header } from './components/Header';
-import { Footer } from './components/Footer';
+import { Footer } from './components/MainFooter';
 import { HeroSection } from './components/HeroSection';
 import { ValueProps } from './components/ValueProps';
 import { FeaturedCategories } from './components/FeaturedCategories';
