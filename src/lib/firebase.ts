@@ -28,7 +28,7 @@ import {
   getDownloadURL, 
   deleteObject 
 } from 'firebase/storage';
-import config from '../../firebase-applet-config.json';
+// import firebaseConfig from '../../firebase-applet-config.json';
 import { UserProfile, RentalOrder, UserFile, LenderProfile, ShoeListing, Dispute, KycStatus, EscrowStatus, SupportTicket, SupportMessage } from '../types';
 
 // Error Handler helper as per Firebase skill
